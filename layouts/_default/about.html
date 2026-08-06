@@ -1,0 +1,18 @@
+{{ define "main" }}
+    <section class="page-hero">
+        <div class="container">
+            <h1 class="page-title">{{ .Title }}</h1>
+        </div>
+    </section>
+
+    <section class="content-page">
+        <div class="container-narrow">
+            <div class="article-post-content">
+                {{ .Content }}
+            </div>
+            <div class="page-back">
+                <a href="/" class="btn btn-secondary">← Back to Home</a>
+            </div>
+        </div>
+    </section>
+{{ end }}

@@ -1,0 +1,53 @@
+{{ define "main" }}
+    <section class="page-hero">
+        <div class="container">
+            <h1 class="page-title">{{ .Title }}</h1>
+            <p class="page-description">{{ .Description }}</p>
+        </div>
+    </section>
+
+    <section class="content-page">
+        <div class="container contact-grid">
+            <form class="contact-form" aria-describedby="contact-form-note">
+                <div class="form-field">
+                    <label for="name">Name</label>
+                    <input type="text" id="name" name="name" autocomplete="name" required>
+                </div>
+                <div class="form-field">
+                    <label for="email">Email</label>
+                    <input type="email" id="email" name="email" autocomplete="email" required>
+                </div>
+                <div class="form-field">
+                    <label for="message">Message</label>
+                    <textarea id="message" name="message" required></textarea>
+                </div>
+                <div>
+                    <button type="submit" class="btn btn-primary">Send Message</button>
+                    <p class="form-status" role="status" aria-live="polite"></p>
+                </div>
+                <p id="contact-form-note" class="form-note">This form isn't wired up to anything yet — connect it to your backend or a form service (Formspree, Netlify Forms, etc.) when you use this template for a real site.</p>
+            </form>
+
+            <div>
+                {{ with .Site.Params.contactEmail }}
+                <div class="contact-info-item">
+                    <span class="contact-info-label">Email</span>
+                    <p class="contact-info-value"><a href="mailto:{{ . }}">{{ . }}</a></p>
+                </div>
+                {{ end }}
+                <div class="contact-info-item contact-social">
+                    <span class="contact-info-label">Follow</span>
+                    <div class="footer-social">
+                        {{ partial "social-icons.html" (dict "social" .Site.Params.social "class" "share-link" "iconOnly" true) }}
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="container">
+            <div class="page-back">
+                <a href="/" class="btn btn-secondary">← Back to Home</a>
+            </div>
+        </div>
+    </section>
+{{ end }}

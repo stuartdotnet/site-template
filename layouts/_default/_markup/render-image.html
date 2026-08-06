@@ -1,0 +1,31 @@
+{{- /*
+    Image render hook. Resolves inline markdown images against the page's
+    bundle resources so they get published (a bare markdown reference does not
+    trigger publishing on its own). Large images are capped to a sensible width
+    and served as WebP for performance; alt text and lazy loading are preserved.
+    External URLs and non-resource paths fall through untouched.
+
+    The optional markdown "title" doubles as a caption/credit line, e.g.
+    ![A crowd marching](protest.jpg "Photo by [Jane Doe](url) on [Unsplash](url)")
+    — when present the image is wrapped in a <figure> with a <figcaption>.
+    The title is run through markdownify so inline links in the credit work.
+*/ -}}
+{{- $src := .Destination -}}
+{{- $alt := .PlainText -}}
+{{- $caption := .Title -}}
+{{- $imgTag := "" -}}
+{{- with .Page.Resources.GetMatch $src -}}
+    {{- $img := . -}}
+    {{- if gt $img.Width 1400 -}}{{- $img = $img.Resize "1400x webp q82" -}}{{- end -}}
+    {{- $imgTag = printf `<img src="%s" alt="%s" loading="lazy" decoding="async" width="%d" height="%d">` $img.RelPermalink $alt $img.Width $img.Height -}}
+{{- else -}}
+    {{- $imgTag = printf `<img src="%s" alt="%s" loading="lazy" decoding="async">` $src $alt -}}
+{{- end -}}
+{{- if $caption -}}
+<figure>
+    {{- $imgTag | safeHTML }}
+    <figcaption>{{ $caption | markdownify }}</figcaption>
+</figure>
+{{- else -}}
+    {{- $imgTag | safeHTML }}
+{{- end -}}

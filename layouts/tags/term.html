@@ -1,0 +1,23 @@
+{{ define "main" }}
+    <section class="page-hero">
+        <div class="container">
+            <span class="section-eyebrow">Tag</span>
+            <h1 class="page-title">{{ .Title }}</h1>
+            <p class="page-description">{{ len .Pages }} article{{ if ne (len .Pages) 1 }}s{{ end }} tagged “{{ .Title }}”.</p>
+        </div>
+    </section>
+
+    <section class="home-section">
+        <div class="container">
+            <div class="article-grid">
+                {{ range .Pages }}
+                {{ partial "article-card.html" . }}
+                {{ end }}
+            </div>
+
+            <div class="page-back">
+                <a href="/tags/" class="btn btn-secondary">← All Tags</a>
+            </div>
+        </div>
+    </section>
+{{ end }}

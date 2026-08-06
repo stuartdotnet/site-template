@@ -1,0 +1,31 @@
+{{ define "main" }}
+    <section class="page-hero">
+        <div class="container">
+            <h1 class="page-title">Articles</h1>
+            <p class="page-description">{{ .Description }}</p>
+        </div>
+    </section>
+
+    <section class="articles-list home-section">
+        <div class="container">
+            {{ $paginator := .Paginate (where .Site.RegularPages "Section" "articles") }}
+            <div class="article-grid">
+                {{ range $paginator.Pages }}
+                {{ partial "article-card.html" . }}
+                {{ end }}
+            </div>
+
+            {{ if gt $paginator.TotalPages 1 }}
+            <nav class="pagination" aria-label="Articles pagination">
+                {{ if $paginator.HasPrev }}<a href="{{ $paginator.Prev.URL }}" class="pagination-link">← Newer</a>{{ end }}
+                <span aria-current="page">Page {{ $paginator.PageNumber }} of {{ $paginator.TotalPages }}</span>
+                {{ if $paginator.HasNext }}<a href="{{ $paginator.Next.URL }}" class="pagination-link">Older →</a>{{ end }}
+            </nav>
+            {{ end }}
+
+            <div class="page-back">
+                <a href="/" class="btn btn-secondary">← Back to Home</a>
+            </div>
+        </div>
+    </section>
+{{ end }}

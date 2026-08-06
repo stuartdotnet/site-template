@@ -1,0 +1,64 @@
+baseURL = 'https://example.com/'
+locale = 'en-us'
+title = 'Site Template'
+
+[taxonomies]
+  tag = 'tags'
+  author = 'authors'
+
+[params]
+  description = 'A short, honest sentence about what this site is for.'
+  tagline = 'A one-line pitch for the site goes here'
+  author = 'Site Template'
+  # Shown on the contact page. Leave blank to hide the "email us" line.
+  contactEmail = 'hello@example.com'
+
+  [params.social]
+    # Delete any line you don't need — social-icons.html only renders what's set.
+    x = 'https://x.com/example'
+    instagram = 'https://instagram.com/example'
+    facebook = 'https://facebook.com/example'
+    linkedin = 'https://linkedin.com/company/example'
+    youtube = 'https://youtube.com/@example'
+
+[menu]
+  [[menu.main]]
+    name = 'Articles'
+    url = '/articles/'
+    weight = 1
+
+  [[menu.main]]
+    name = 'Authors'
+    url = '/authors/'
+    weight = 2
+
+  [[menu.main]]
+    name = 'About'
+    url = '/about/'
+    weight = 3
+
+  [[menu.main]]
+    name = 'Contact'
+    url = '/contact/'
+    weight = 4
+
+[markup]
+  [markup.goldmark]
+    [markup.goldmark.renderer]
+      unsafe = true
+  [markup.highlight]
+    style = 'monokai'
+    lineNos = false
+    lineNumbersInTable = false
+
+[outputs]
+  home = ['HTML', 'RSS']
+  section = ['HTML', 'RSS']
+
+[security]
+  allowContent = ['text/html', 'text/markdown', 'text/plain']
+
+[caches]
+  [caches.getresource]
+    dir = ':cacheDir/:project'
+    maxAge = '1h'

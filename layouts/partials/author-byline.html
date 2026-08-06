@@ -1,0 +1,18 @@
+{{/*
+    Renders a byline (avatar-mark + linked name) for each author term attached
+    to a page via front matter `authors: ["a-slug"]`. Falls back to nothing if
+    no author term is set, so it's safe to call unconditionally.
+    Call with: {{ partial "author-byline.html" (dict "page" . "size" "sm") }}
+*/}}
+{{- $page := .page -}}
+{{- $size := .size | default "sm" -}}
+{{- range $page.GetTerms "authors" -}}
+{{- $avatar := "" -}}
+{{- with .Params.avatar }}{{ with $.Resources.GetMatch . }}{{ $avatar = . }}{{ end }}{{ end -}}
+<a href="{{ .RelPermalink }}" class="byline" aria-label="View {{ .Title }}'s profile">
+    <span class="avatar-mark avatar-mark--{{ $size }}">
+        {{ if $avatar }}<img src="{{ $avatar.RelPermalink }}" alt="">{{ else }}{{ substr .Title 0 1 }}{{ end }}
+    </span>
+    <span class="byline-name">{{ .Title }}</span>
+</a>
+{{- end -}}

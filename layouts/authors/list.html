@@ -1,0 +1,35 @@
+{{ define "main" }}
+    <section class="page-hero">
+        <div class="container">
+            <span class="section-eyebrow">Who Writes Here</span>
+            <h1 class="page-title">Authors</h1>
+            <p class="page-description">{{ .Description }}</p>
+        </div>
+    </section>
+
+    <section class="home-section">
+        <div class="container">
+            <div class="author-grid">
+                {{ range .Site.Taxonomies.authors.Alphabetical }}
+                {{ $author := .Page }}
+                {{ $avatar := "" }}
+                {{ with $author.Params.avatar }}{{ with $author.Resources.GetMatch . }}{{ $avatar = . }}{{ end }}{{ end }}
+                <a href="{{ $author.RelPermalink }}" class="author-card">
+                    <span class="avatar-mark avatar-mark--md">
+                        {{ if $avatar }}<img src="{{ $avatar.RelPermalink }}" alt="">{{ else }}{{ substr $author.Title 0 1 }}{{ end }}
+                    </span>
+                    <span>
+                        <span class="author-card-name">{{ $author.Title }}</span><br>
+                        {{ with $author.Params.role }}<span class="author-card-role">{{ . }}</span><br>{{ end }}
+                        <span class="author-card-count">{{ .Count }} article{{ if ne .Count 1 }}s{{ end }}</span>
+                    </span>
+                </a>
+                {{ end }}
+            </div>
+
+            <div class="page-back">
+                <a href="/" class="btn btn-secondary">← Back to Home</a>
+            </div>
+        </div>
+    </section>
+{{ end }}

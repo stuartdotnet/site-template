@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    {{ partial "head.html" . }}
+    <noscript><style>[data-observe]{opacity:1!important;transform:none!important;}</style></noscript>
+</head>
+<body>
+    <a href="#main-content" class="skip-link">Skip to main content</a>
+
+    {{ partial "nav.html" . }}
+
+    <main id="main-content">
+        {{ block "main" . }}{{ end }}
+    </main>
+
+    {{ partial "footer.html" . }}
+
+    <script src="/js/scripts.js"></script>
+    {{ block "scripts" . }}{{ end }}
+</body>
+</html>

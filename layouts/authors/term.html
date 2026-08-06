@@ -1,0 +1,45 @@
+{{ define "main" }}
+    {{ $avatar := "" }}
+    {{ with .Params.avatar }}{{ with $.Resources.GetMatch . }}{{ $avatar = . }}{{ end }}{{ end }}
+    <section class="page-hero">
+        <div class="container">
+            <div class="author-profile">
+                <span class="avatar-mark avatar-mark--lg">
+                    {{ if $avatar }}<img src="{{ $avatar.RelPermalink }}" alt="">{{ else }}{{ substr .Title 0 1 }}{{ end }}
+                </span>
+                <div>
+                    <h1 class="author-profile-name">{{ .Title }}</h1>
+                    {{ with .Params.role }}<p class="author-profile-role">{{ . }}</p>{{ end }}
+                </div>
+            </div>
+            {{ with .Content }}<div class="author-profile-bio">{{ . }}</div>{{ end }}
+            {{ with .Params.social }}
+            <div class="author-profile-social">
+                {{ partial "social-icons.html" (dict "social" . "class" "share-link" "iconOnly" true) }}
+            </div>
+            {{ end }}
+        </div>
+    </section>
+
+    <section class="home-section">
+        <div class="container">
+            {{ if .Pages }}
+            <div class="section-header">
+                <span class="section-eyebrow">Articles</span>
+                <h2 class="section-title">By {{ .Title }}</h2>
+            </div>
+            <div class="article-grid">
+                {{ range .Pages }}
+                {{ partial "article-card.html" . }}
+                {{ end }}
+            </div>
+            {{ else }}
+            <p class="page-description">No articles published yet.</p>
+            {{ end }}
+
+            <div class="page-back">
+                <a href="/authors/" class="btn btn-secondary">← All Authors</a>
+            </div>
+        </div>
+    </section>
+{{ end }}

@@ -1,0 +1,23 @@
+{{ define "main" }}
+    <section class="page-hero">
+        <div class="container">
+            <span class="section-eyebrow">Browse</span>
+            <h1 class="page-title">Tags</h1>
+            <p class="page-description">Every topic covered on {{ .Site.Title }}, in one place.</p>
+        </div>
+    </section>
+
+    <section class="home-section">
+        <div class="container">
+            <div class="tag-list">
+                {{ range .Data.Terms.Alphabetical }}
+                <a href="{{ .Page.RelPermalink }}" class="tag">{{ .Page.Title }} ({{ .Count }})</a>
+                {{ end }}
+            </div>
+
+            <div class="page-back">
+                <a href="/" class="btn btn-secondary">← Back to Home</a>
+            </div>
+        </div>
+    </section>
+{{ end }}

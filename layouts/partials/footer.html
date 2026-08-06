@@ -1,0 +1,20 @@
+<!-- Footer -->
+<footer class="footer">
+    <div class="container footer-inner">
+        <div class="footer-top">
+            <p class="footer-tagline">{{ .Site.Params.tagline }}</p>
+            <div class="footer-links">
+                {{ range .Site.Menus.main }}
+                <a href="{{ .URL }}">{{ .Name }}</a>
+                {{ end }}
+                <a href="/articles/index.xml" aria-label="Subscribe to the {{ .Site.Title }} RSS feed">RSS</a>
+            </div>
+            <div class="footer-social">
+                {{ partial "social-icons.html" (dict "social" .Site.Params.social "class" "footer-social-link" "iconOnly" true) }}
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p class="footer-text">&copy; {{ now.Format "2006" }} {{ .Site.Title }}</p>
+        </div>
+    </div>
+</footer>

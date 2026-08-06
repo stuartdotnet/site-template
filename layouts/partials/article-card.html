@@ -1,0 +1,23 @@
+{{/* Renders one .article-card. Expects . to be a Page in the articles section. */}}
+{{- $post := . -}}
+{{- $thumb := "" -}}
+{{- with .Params.image }}{{ with $post.Resources.GetMatch . }}{{ $thumb = .Fill "600x375 Center webp q80" }}{{ end }}{{ end -}}
+<article class="article-card">
+    {{ if $thumb }}
+    <a href="{{ .RelPermalink }}" class="article-card-thumb" aria-hidden="true" tabindex="-1">
+        <img src="{{ $thumb.RelPermalink }}" alt="" loading="lazy" decoding="async" width="600" height="375">
+    </a>
+    {{ else }}
+    <a href="{{ .RelPermalink }}" class="article-card-thumb article-card-thumb--placeholder" aria-hidden="true" tabindex="-1">{{ substr .Site.Title 0 2 }}</a>
+    {{ end }}
+    <div class="article-card-body">
+        <div class="article-card-meta">
+            <time class="article-date" datetime="{{ .Date.Format "2006-01-02" }}">{{ .Date.Format "2 Jan 2006" }}</time>
+            {{ range first 2 (.GetTerms "tags") }}<a href="{{ .RelPermalink }}" class="tag">{{ .Title }}</a>{{ end }}
+        </div>
+        <h3 class="article-card-title"><a href="{{ .RelPermalink }}">{{ .Title }}</a></h3>
+        <p class="article-card-desc">{{ with .Params.description }}{{ . }}{{ else }}{{ .Summary }}{{ end }}</p>
+        {{ partial "author-byline.html" (dict "page" . "size" "sm") }}
+        <a href="{{ .RelPermalink }}" class="article-card-link" aria-label="Read: {{ .Title }}">Read article →</a>
+    </div>
+</article>

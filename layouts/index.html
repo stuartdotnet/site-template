@@ -1,0 +1,55 @@
+{{ define "main" }}
+    <!-- Hero — replace this copy with your own pitch. Keep it to one idea. -->
+    <section id="hero" class="hero">
+        <div class="container">
+            <div class="hero-badge">Template</div>
+            <h1 class="hero-title">
+                <span class="line">{{ .Site.Params.tagline }}</span>
+            </h1>
+            <p class="hero-description">{{ .Site.Params.description }}</p>
+            <div class="hero-cta">
+                <a href="/articles/" class="btn btn-primary">Read the Articles</a>
+                <a href="/about/" class="btn btn-secondary">About This Site</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Latest Articles -->
+    <section id="articles" class="home-section" data-observe>
+        <div class="container">
+            <div class="section-header">
+                <span class="section-eyebrow">Latest</span>
+                <h2 class="section-title">Recent Articles</h2>
+                <p class="section-description">The most recent posts, newest first.</p>
+            </div>
+            {{ $articles := where .Site.RegularPages "Section" "articles" }}
+            {{ if $articles }}
+            <div class="article-grid">
+                {{ range first 3 $articles }}
+                {{ partial "article-card.html" . }}
+                {{ end }}
+            </div>
+            {{ else }}
+            <p class="section-description">Nothing published yet — add a Markdown file under <code>content/articles/</code> to get started.</p>
+            {{ end }}
+            <div class="view-all">
+                <a href="/articles/" class="btn btn-secondary">View All Articles →</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Get Involved -->
+    <section id="contact" class="home-section" data-observe>
+        <div class="container">
+            <div class="section-header">
+                <span class="section-eyebrow">Get In Touch</span>
+                <h2 class="section-title">Say Hello</h2>
+                <p class="section-description">Swap this for whatever call-to-action fits the site — a newsletter signup, a booking link, a store.</p>
+            </div>
+            <div class="hero-cta">
+                <a href="/contact/" class="btn btn-primary">Contact Us</a>
+                {{ range .Site.Menus.main }}{{ if eq .Name "Authors" }}<a href="{{ .URL }}" class="btn btn-secondary">Meet the Authors</a>{{ end }}{{ end }}
+            </div>
+        </div>
+    </section>
+{{ end }}
