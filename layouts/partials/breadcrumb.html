@@ -1,0 +1,37 @@
+{{/*
+    Breadcrumb trail. Walks .Parent up the page tree rather than parsing the
+    URL, so it stays correct if sections are renamed or nested.
+*/}}
+{{ $crumbs := slice }}
+{{ $node := . }}
+{{ range seq 5 }}
+    {{ with $node }}
+        {{ if not .IsHome }}
+            {{ $crumbs = $crumbs | append . }}
+            {{ $node = .Parent }}
+        {{ else }}
+            {{ $node = false }}
+        {{ end }}
+    {{ end }}
+{{ end }}
+{{ $ordered := sort $crumbs "RelPermalink" }}
+<nav class="breadcrumb" aria-label="Breadcrumb">
+    <a href="/">Home</a>
+    {{ range $ordered }}
+    <span class="breadcrumb-sep" aria-hidden="true">/</span>
+    {{ if eq .RelPermalink $.RelPermalink }}<span>{{ .LinkTitle }}</span>{{ else }}<a href="{{ .RelPermalink }}">{{ .LinkTitle }}</a>{{ end }}
+    {{ end }}
+</nav>
+{{/* The same trail as BreadcrumbList, so search results show the path through
+     the site instead of a bare URL. Kept next to the markup it mirrors, since
+     the two must not drift apart. */}}
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    { "@type": "ListItem", "position": 1, "name": "Home", "item": "{{ $.Site.BaseURL }}" }{{ range $i, $c := $ordered }},
+    { "@type": "ListItem", "position": {{ add $i 2 }}, "name": {{ $c.LinkTitle | jsonify | safeJS }}, "item": "{{ $c.Permalink }}" }{{ end }}
+  ]
+}
+</script>

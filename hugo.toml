@@ -2,6 +2,10 @@ baseURL = 'https://example.com/'
 locale = 'en-us'
 title = 'Site Template'
 
+# robots.txt is generated from layouts/robots.txt so the sitemap line
+# follows baseURL. Never ship a static one with a hardcoded URL.
+enableRobotsTXT = true
+
 [taxonomies]
   tag = 'tags'
   author = 'authors'
