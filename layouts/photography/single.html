@@ -1,0 +1,49 @@
+{{ define "main" }}
+    <section class="page-hero">
+        <div class="container">
+            <h1 class="page-title">{{ .Title }}</h1>
+            <p class="page-description">{{ .Description }}</p>
+        </div>
+    </section>
+
+    <section class="gallery-section home-section">
+        <div class="container">
+            {{ with .Content }}<div class="gallery-intro">{{ . }}</div>{{ end }}
+
+            {{ if .Params.photos }}
+            <ul class="gallery-grid">
+                {{ range .Params.photos }}
+                {{ $meta := . }}
+                {{ with $.Resources.GetMatch $meta.image }}
+                {{ $thumb := .Resize "700x webp q82" }}
+                {{ $full := .Resize "1800x webp q85" }}
+                <li class="gallery-item">
+                    <button type="button" class="gallery-thumb" data-full="{{ $full.RelPermalink }}" data-alt="{{ $meta.alt }}" data-caption="{{ with $meta.caption }}{{ . }}{{ end }}" data-w="{{ $full.Width }}" data-h="{{ $full.Height }}">
+                        <img src="{{ $thumb.RelPermalink }}" alt="{{ $meta.alt }}" loading="lazy" decoding="async" width="{{ $thumb.Width }}" height="{{ $thumb.Height }}">
+                    </button>
+                </li>
+                {{ end }}
+                {{ end }}
+            </ul>
+            {{ else }}
+            <p class="gallery-empty">No photos yet. Add some to the <code>photos</code> list in this page's front matter.</p>
+            {{ end }}
+
+            <div class="page-back">
+                <a href="/" class="btn btn-secondary">← Back to Home</a>
+            </div>
+        </div>
+    </section>
+
+    {{/* Lightbox — one dialog, reused for every photo. See scripts.js. */}}
+    <dialog class="lightbox" id="lightbox" aria-label="Photo viewer">
+        <button type="button" class="lightbox-close" aria-label="Close">&times;</button>
+        <button type="button" class="lightbox-prev" aria-label="Previous photo">&#8249;</button>
+        <button type="button" class="lightbox-next" aria-label="Next photo">&#8250;</button>
+        <figure class="lightbox-figure">
+            <img class="lightbox-img" src="" alt="">
+            <figcaption class="lightbox-caption"></figcaption>
+            <p class="lightbox-count"></p>
+        </figure>
+    </dialog>
+{{ end }}

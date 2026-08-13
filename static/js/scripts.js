@@ -82,4 +82,61 @@
             }
         });
     }
+
+    // Photography gallery lightbox
+    var galleryThumbs = Array.prototype.slice.call(document.querySelectorAll('.gallery-thumb'));
+    var lightboxEl = document.getElementById('lightbox');
+
+    if (galleryThumbs.length && lightboxEl) {
+        var lightboxImg = lightboxEl.querySelector('.lightbox-img');
+        var lightboxCaption = lightboxEl.querySelector('.lightbox-caption');
+        var lightboxCount = lightboxEl.querySelector('.lightbox-count');
+        var lightboxClose = lightboxEl.querySelector('.lightbox-close');
+        var lightboxPrev = lightboxEl.querySelector('.lightbox-prev');
+        var lightboxNext = lightboxEl.querySelector('.lightbox-next');
+        var currentIndex = 0;
+        var lastTrigger = null;
+
+        function showPhoto(index) {
+            currentIndex = (index + galleryThumbs.length) % galleryThumbs.length;
+            var thumb = galleryThumbs[currentIndex];
+            lightboxImg.src = thumb.getAttribute('data-full');
+            lightboxImg.alt = thumb.getAttribute('data-alt') || '';
+            lightboxImg.width = thumb.getAttribute('data-w');
+            lightboxImg.height = thumb.getAttribute('data-h');
+            lightboxCaption.textContent = thumb.getAttribute('data-caption') || '';
+            lightboxCount.textContent = (currentIndex + 1) + ' / ' + galleryThumbs.length;
+        }
+
+        function closeLightbox() {
+            lightboxEl.close();
+        }
+
+        galleryThumbs.forEach(function (thumb, index) {
+            thumb.addEventListener('click', function () {
+                lastTrigger = thumb;
+                showPhoto(index);
+                lightboxEl.showModal();
+            });
+        });
+
+        lightboxClose.addEventListener('click', closeLightbox);
+        lightboxPrev.addEventListener('click', function () { showPhoto(currentIndex - 1); });
+        lightboxNext.addEventListener('click', function () { showPhoto(currentIndex + 1); });
+
+        // Clicking the dialog itself (not its children) means the backdrop area was hit.
+        lightboxEl.addEventListener('click', function (e) {
+            if (e.target === lightboxEl) closeLightbox();
+        });
+
+        lightboxEl.addEventListener('keydown', function (e) {
+            if (e.key === 'ArrowLeft') showPhoto(currentIndex - 1);
+            else if (e.key === 'ArrowRight') showPhoto(currentIndex + 1);
+        });
+
+        lightboxEl.addEventListener('close', function () {
+            lightboxImg.src = '';
+            if (lastTrigger) lastTrigger.focus();
+        });
+    }
 })();
