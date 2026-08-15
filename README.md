@@ -15,6 +15,10 @@ rename it, and start editing.
    - `content/authors/jane-doe/` — delete or overwrite; rename the folder to
      match the slug you reference in an article's `authors:` front matter
    - `content/about.md`, `content/contact.md` — swap the placeholder copy
+   - `content/photography/index.md` — drop photos into the folder and list
+     them in the `photos` front matter, or delete the whole `photography/`
+     folder and its `[[menu.main]]` entry in `hugo.toml` if a given site has
+     no use for a gallery
 4. Wire up the contact form — it's intentionally not connected to anything.
    See the comment in `static/js/scripts.js` and either post to a form
    service (Formspree, Netlify Forms) or your own backend.
@@ -57,6 +61,18 @@ Bump the version in `.tool-versions` and the host variable together.
   the template ships with zero binary image assets by default.
 - `about.md` and `contact.md` are plain top-level pages using a `layout:`
   override (see their front matter) rather than a section.
+- **Photography** (`content/photography/`) is a single page bundle, not a
+  section with a listing page — there's one gallery, not a directory of
+  them. Each photo is an entry in the `photos` front-matter list (`image`
+  is the filename, sitting in the same folder as `index.md`; `alt` is
+  required; `caption` is optional). Hugo generates a grid thumbnail and a
+  larger lightbox image per photo at build time — drop in the original
+  file and don't pre-resize it. Ships with `photos: []` and zero image
+  files, consistent with the rest of the template; the page renders an
+  empty state until photos are added. The grid (`.gallery-grid`) and the
+  native `<dialog>` lightbox (`static/js/scripts.js`) are both no-ops with
+  nothing to select if you delete the folder — see step 3 above to remove
+  the feature entirely.
 
 ## Content editing (CMS)
 
