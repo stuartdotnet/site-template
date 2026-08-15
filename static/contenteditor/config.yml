@@ -51,7 +51,7 @@ collections:
         hint: >-
           120–160 characters. Used as the SEO meta description and the
           article-list summary.
-      - { label: Tags, name: tags, widget: list, default: [] }
+      - { label: Tags, name: tags, widget: list, required: false, default: [] }
       - label: Authors
         name: authors
         widget: relation
@@ -60,7 +60,11 @@ collections:
         value_field: '{{slug}}'
         display_fields: [title]
         multiple: true
+        required: false
         default: []
+        hint: >-
+          Optional — author-byline.html renders nothing if this is empty.
+          Leaving it blank does not block publishing.
       - label: Image
         name: image
         widget: image
