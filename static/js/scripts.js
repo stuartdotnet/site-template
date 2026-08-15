@@ -68,18 +68,65 @@
         observeTargets.forEach(function (el) { observer.observe(el); });
     }
 
-    // Contact form — front-end only. Swap this handler for a real POST to
-    // your backend or form service (Formspree, Netlify Forms, etc.) when
-    // this template is used for a real site.
+    // Contact form — posts to the shared contact-relay Worker. See
+    // hugo.toml's [params.contact] and C:\Code\contact-relay\README.md.
     var contactForm = document.querySelector('.contact-form');
     if (contactForm) {
         var status = contactForm.querySelector('.form-status');
+        var submitBtn = contactForm.querySelector('button[type="submit"]');
+        var endpoint = contactForm.getAttribute('data-contact-endpoint');
+        var siteId = contactForm.getAttribute('data-contact-site-id');
+
+        function setStatus(text, state) {
+            if (!status) return;
+            status.textContent = text;
+            status.setAttribute('data-state', state);
+        }
+
         contactForm.addEventListener('submit', function (e) {
             e.preventDefault();
-            if (status) {
-                status.textContent = 'This form isn’t connected to anything yet — wire it up to your backend or a form service.';
-                status.setAttribute('data-state', 'sent');
+
+            if (!endpoint || !siteId) {
+                setStatus('This form isn’t wired up yet — set [params.contact] in hugo.toml.', 'error');
+                return;
             }
+
+            var honeypot = contactForm.querySelector('input[name="company"]');
+            var tokenField = contactForm.querySelector('[name="cf-turnstile-response"]');
+
+            var payload = {
+                site: siteId,
+                name: contactForm.querySelector('#name').value,
+                email: contactForm.querySelector('#email').value,
+                message: contactForm.querySelector('#message').value,
+                hp: honeypot ? honeypot.value : '',
+                token: tokenField ? tokenField.value : ''
+            };
+
+            if (submitBtn) submitBtn.disabled = true;
+            setStatus('Sending…', 'sending');
+
+            fetch(endpoint, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(payload)
+            })
+                .then(function (res) { return res.json().then(function (data) { return { ok: res.ok, data: data }; }); })
+                .then(function (result) {
+                    if (result.ok && result.data.ok) {
+                        contactForm.reset();
+                        if (window.turnstile) window.turnstile.reset();
+                        setStatus('Message sent — thanks, we’ll be in touch.', 'sent');
+                    } else {
+                        setStatus('Something went wrong sending that — please try again or email us directly.', 'error');
+                    }
+                })
+                .catch(function () {
+                    setStatus('Something went wrong sending that — please try again or email us directly.', 'error');
+                })
+                .finally(function () {
+                    if (submitBtn) submitBtn.disabled = false;
+                });
         });
     }
 

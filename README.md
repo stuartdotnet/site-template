@@ -19,9 +19,13 @@ rename it, and start editing.
      them in the `photos` front matter, or delete the whole `photography/`
      folder and its `[[menu.main]]` entry in `hugo.toml` if a given site has
      no use for a gallery
-4. Wire up the contact form — it's intentionally not connected to anything.
-   See the comment in `static/js/scripts.js` and either post to a form
-   service (Formspree, Netlify Forms) or your own backend.
+4. Wire up the contact form. It posts to a shared Cloudflare Worker
+   (`C:\Code\contact-relay`) that every site on this stack reuses — same
+   pattern as the Sveltia CMS auth Worker below. Add this site to that
+   Worker's `SITES` var, then fill in `[params.contact]` in `hugo.toml`
+   (`siteId`, `endpoint`, `turnstileSiteKey`). Full instructions in
+   `contact-relay`'s own README. Leaving `[params.contact]` blank leaves the
+   form visibly disabled rather than silently unprotected.
 5. Re-theme if you want — every color and font in `static/css/styles.css` is
    a CSS custom property at the top of the file. Nothing below it should
    need to change for a basic re-skin.
@@ -135,6 +139,17 @@ File System Access API, not Firefox/Safari-compatible). It edits the working
 copy on disk directly, no GitHub or Worker required, which is enough to check
 that the collections and fields in `config.yml` are sane before wiring up
 real auth.
+
+## Contact form
+
+The contact page posts to `contact-relay`, one Cloudflare Worker shared
+across every site on this stack — same reuse-one-Worker pattern as the CMS
+auth above, not a per-site backend. It Turnstile-verifies the submission, rate-limits
+by IP, and stores every message in D1 before best-effort emailing a
+notification via Resend, so a message is never lost even if the email send
+fails. See `C:\Code\contact-relay\README.md` for the one-time Worker setup
+and the per-site steps (adding this site to `SITES`, filling in
+`[params.contact]` here).
 
 ## What's deliberately not here
 

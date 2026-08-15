@@ -441,8 +441,12 @@ a.tag:hover { color: var(--accent); background: var(--accent-wash); }
 .form-field input:focus, .form-field textarea:focus { outline: 2px solid var(--accent); outline-offset: 1px; border-color: var(--accent); }
 .form-field textarea { resize: vertical; min-height: 8rem; }
 .form-note { font-size: 0.85rem; color: var(--ink-soft); }
+/* Honeypot: hidden from sighted and screen-reader users alike (unlike .sr-only,
+   which stays screen-reader-visible) — bots that fill every field trip it. */
+.form-honeypot { position: absolute; left: -9999px; width: 1px; height: 1px; overflow: hidden; }
 .form-status { font-size: 0.9rem; font-weight: 600; margin-top: 0.25rem; min-height: 1.3em; }
 .form-status[data-state="sent"] { color: var(--accent); }
+.form-status[data-state="error"] { color: var(--ink); }
 
 .contact-social { margin-top: 1.25rem; }
 .contact-social .footer-social { margin-top: 0.75rem; }

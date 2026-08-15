@@ -8,7 +8,9 @@
 
     <section class="content-page">
         <div class="container contact-grid">
-            <form class="contact-form" aria-describedby="contact-form-note">
+            <form class="contact-form" aria-describedby="contact-form-note"
+                data-contact-endpoint="{{ .Site.Params.contact.endpoint }}"
+                data-contact-site-id="{{ .Site.Params.contact.siteId }}">
                 <div class="form-field">
                     <label for="name">Name</label>
                     <input type="text" id="name" name="name" autocomplete="name" required>
@@ -21,11 +23,18 @@
                     <label for="message">Message</label>
                     <textarea id="message" name="message" required></textarea>
                 </div>
+                <div class="form-field form-honeypot" aria-hidden="true">
+                    <label for="company">Company</label>
+                    <input type="text" id="company" name="company" tabindex="-1" autocomplete="off">
+                </div>
+                {{ with .Site.Params.contact.turnstileSiteKey }}
+                <div class="cf-turnstile" data-sitekey="{{ . }}"></div>
+                {{ end }}
                 <div>
                     <button type="submit" class="btn btn-primary">Send Message</button>
                     <p class="form-status" role="status" aria-live="polite"></p>
                 </div>
-                <p id="contact-form-note" class="form-note">This form isn't wired up to anything yet — connect it to your backend or a form service (Formspree, Netlify Forms, etc.) when you use this template for a real site.</p>
+                <p id="contact-form-note" class="form-note">We'll reply by email, usually within a couple of days.</p>
             </form>
 
             <div>
@@ -50,4 +59,11 @@
             </div>
         </div>
     </section>
+{{ end }}
+
+{{ define "scripts" }}
+{{ with .Site.Params.contact.turnstileSiteKey }}
+<!-- No SRI hash: Cloudflare serves this file dynamically and updates it without notice, so a pinned hash breaks the widget on their next release. -->
+<script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
+{{ end }}
 {{ end }}

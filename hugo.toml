@@ -17,6 +17,14 @@ enableRobotsTXT = true
   # Shown on the contact page. Leave blank to hide the "email us" line.
   contactEmail = 'hello@example.com'
 
+  # The contact form posts to the shared contact-relay Worker (see
+  # C:\Code\contact-relay). All three must be set together or the form
+  # silently has no spam protection — see README.md "Wire up the contact form".
+  [params.contact]
+    siteId = ''
+    endpoint = ''
+    turnstileSiteKey = ''
+
   [params.social]
     # Delete any line you don't need — social-icons.html only renders what's set.
     x = 'https://x.com/example'
