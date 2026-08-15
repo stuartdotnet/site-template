@@ -58,6 +58,68 @@ Bump the version in `.tool-versions` and the host variable together.
 - `about.md` and `contact.md` are plain top-level pages using a `layout:`
   override (see their front matter) rather than a section.
 
+## Content editing (CMS)
+
+`/contenteditor/` is a [Sveltia CMS](https://github.com/sveltia/sveltia-cms) editor for
+non-technical editors: log in with GitHub, edit articles/authors/about/contact
+in forms, hit Save. Behind the scenes it commits straight to `main` (no draft
+step) and Cloudflare Pages rebuilds from that commit, same as any other push.
+`hugo.toml` — title, tagline, social links, menu, markup/security config — is
+deliberately **not** exposed there and stays a code change; see
+`static/contenteditor/config.yml`'s header comment for why.
+
+The folder is named `contenteditor` rather than the more common `admin` —
+Sveltia doesn't care what it's called, it's just a static folder with an
+`index.html` and a `config.yml`. Renaming it is safe and has no effect on the
+GitHub OAuth flow, which is keyed to the Worker's own `/callback` path, not
+this one.
+
+### One-time setup (shared across every house-stack site — do this once, not per clone)
+
+Sveltia has no built-in auth backend the way Netlify Identity does, so GitHub
+OAuth needs a small relay. [`sveltia/sveltia-cms-auth`](https://github.com/sveltia/sveltia-cms-auth)
+is the CMS author's own Cloudflare Worker built for exactly this:
+
+1. Deploy that repo to Cloudflare Workers (the README has a one-click deploy
+   button, or clone it and run `wrangler deploy`).
+2. Note the Worker URL — `https://sveltia-cms-auth.<subdomain>.workers.dev`.
+3. Create a GitHub OAuth App at
+   [github.com/settings/developers](https://github.com/settings/developers):
+   homepage URL = the Worker URL, authorization callback URL = `<worker URL>/callback`.
+4. In the Worker's settings (dashboard → Settings → Variables, or `.dev.vars`
+   locally), set `GITHUB_CLIENT_ID` and `GITHUB_CLIENT_SECRET` from that OAuth
+   App, and optionally `ALLOWED_DOMAINS` to a comma-separated list of every
+   site's hostname that will use it.
+
+Reuse this one Worker and OAuth App for every site on the stack — add a new
+site's domain to `ALLOWED_DOMAINS` rather than standing up a second one.
+
+### Per-site setup (do this for every clone, same as `baseURL`)
+
+In `static/contenteditor/config.yml`, replace the two placeholders:
+
+```yaml
+backend:
+  repo: OWNER/REPO-NAME       # this site's GitHub repo
+  base_url: https://sveltia-cms-auth.<subdomain>.workers.dev   # the shared Worker
+site_url: https://example.com # must match hugo.toml's baseURL
+```
+
+`bash "C:/Code/.claude/skills/site-build/scripts/preflight.sh"` catches either
+placeholder left unset, the same way it catches an unset `baseURL`.
+
+An editor needs push access to the site's GitHub repo — there is no separate
+CMS user list; GitHub permissions *are* the permission system.
+
+### Trying it before any of the above is deployed
+
+`hugo server`, then open `http://localhost:1313/contenteditor/` in Chrome or Edge and
+click **Work with Local Repository** (needs a Chromium browser — this uses the
+File System Access API, not Firefox/Safari-compatible). It edits the working
+copy on disk directly, no GitHub or Worker required, which is enough to check
+that the collections and fields in `config.yml` are sane before wiring up
+real auth.
+
 ## What's deliberately not here
 
 Videos, a resources/links directory, and a shop page existed in the site

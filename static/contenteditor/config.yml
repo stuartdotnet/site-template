@@ -1,0 +1,134 @@
+# Sveltia CMS config — the customer-facing content editor at /contenteditor/.
+#
+# Scope is deliberate: articles, authors, about and contact copy. hugo.toml
+# (title, tagline, social links, menu, markup/security config) is NOT exposed
+# here and stays a code change — see the site-build skill's baseline.md,
+# section 7, for why.
+#
+# Two placeholders below MUST be set per site before this goes live —
+# `bash scripts/preflight.sh` (from the site-build skill) flags both:
+#   1. backend.repo   — this site's own GitHub repo, "owner/name"
+#   2. backend.base_url — the shared OAuth worker URL (one-time setup,
+#      reused across every house-stack site). See README.md, "Content
+#      editing (CMS)".
+
+backend:
+  name: github
+  repo: OWNER/REPO-NAME # TODO: set to this site's GitHub repo before launch
+  branch: main
+  base_url: https://sveltia-cms-auth.WORKERS-SUBDOMAIN.workers.dev # TODO: shared auth worker URL
+
+site_url: https://example.com # TODO: match hugo.toml baseURL exactly
+
+media_folder: static/images/uploads
+public_folder: /images/uploads
+
+collections:
+  - name: articles
+    label: Articles
+    label_singular: Article
+    description: >-
+      One page bundle per article. Images uploaded here save into the same
+      folder as the article, so they travel together.
+    folder: content/articles
+    path: '{{slug}}/index'
+    create: true
+    slug: '{{slug}}'
+    format: yaml
+    media_folder: ''
+    public_folder: ''
+    fields:
+      - { label: Title, name: title, widget: string }
+      - { label: Date, name: date, widget: datetime }
+      - label: Draft
+        name: draft
+        widget: boolean
+        default: true
+        hint: A draft article does not appear on the live site.
+      - label: Description
+        name: description
+        widget: text
+        hint: >-
+          120–160 characters. Used as the SEO meta description and the
+          article-list summary.
+      - { label: Tags, name: tags, widget: list, default: [] }
+      - label: Authors
+        name: authors
+        widget: relation
+        collection: authors
+        search_fields: [title]
+        value_field: '{{slug}}'
+        display_fields: [title]
+        multiple: true
+        default: []
+      - label: Image
+        name: image
+        widget: image
+        required: false
+        hint: Leave blank to use the placeholder thumbnail.
+      - { label: Body, name: body, widget: markdown }
+
+  - name: authors
+    label: Authors
+    label_singular: Author
+    description: >-
+      One page bundle per author. The folder name is the slug an article's
+      Authors field points at — renaming an author here breaks that link, so
+      rename with care.
+    folder: content/authors
+    path: '{{slug}}/_index'
+    create: true
+    slug: '{{slug}}'
+    format: yaml
+    media_folder: ''
+    public_folder: ''
+    fields:
+      - { label: Name, name: title, widget: string }
+      - label: Role
+        name: role
+        widget: string
+        required: false
+        hint: 'e.g. "Editor" or "Contributor"'
+      - label: Bio (short)
+        name: description
+        widget: text
+        hint: One or two sentences — the byline bio and profile meta description.
+      - label: Avatar
+        name: avatar
+        widget: image
+        required: false
+        hint: Leave blank to use the generated initials mark.
+      - label: Social
+        name: social
+        widget: object
+        required: false
+        fields:
+          - { label: X (Twitter), name: x, widget: string, required: false }
+          - { label: LinkedIn, name: linkedin, widget: string, required: false }
+      - label: Bio (long)
+        name: body
+        widget: markdown
+        required: false
+        hint: Renders on the author's profile page, below their name.
+
+  - name: pages
+    label: Pages
+    files:
+      - label: About
+        name: about
+        file: content/about.md
+        fields:
+          - { label: Title, name: title, widget: string }
+          - { label: Description, name: description, widget: text }
+          # Fixed, not customer-editable — the CMS only writes fields it
+          # knows about, so an unlisted front-matter key would be silently
+          # dropped on the first save and the page would lose its layout.
+          - { label: Layout, name: layout, widget: hidden, default: about }
+          - { label: Body, name: body, widget: markdown }
+      - label: Contact
+        name: contact
+        file: content/contact.md
+        fields:
+          - { label: Title, name: title, widget: string }
+          - { label: Description, name: description, widget: text }
+          - { label: Layout, name: layout, widget: hidden, default: contact }

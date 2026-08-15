@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="robots" content="noindex, nofollow" />
+  <title>Content Manager</title>
+  <link rel="icon" href="data:,">
+</head>
+<body>
+  <!-- Sveltia CMS reads ./config.yml automatically — no config link tag needed.
+       Version is pinned and hashed on purpose: this script ends up holding a
+       GitHub token with repo write access, so an unpinned CDN reference is a
+       supply-chain risk, not just a stability one. To upgrade, bump the version
+       in both the URL and the integrity hash — regenerate the hash with:
+         curl -sL https://unpkg.com/@sveltia/cms@<version>/dist/sveltia-cms.js | openssl dgst -sha384 -binary | openssl base64 -A -->
+  <script
+    src="https://unpkg.com/@sveltia/cms@0.190.0/dist/sveltia-cms.js"
+    integrity="sha384-oU9KWcAKB9jeKOjUCQt2r6DM+O2B8D0wGeTBoezzWe6IL5iRL/01VoW1kucBNqF5"
+    crossorigin="anonymous"
+    type="module"></script>
+</body>
+</html>
