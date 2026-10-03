@@ -31,7 +31,7 @@ Open <http://localhost:1313>.
    - `content/authors/jane-doe/` — delete or overwrite; rename the folder to
      match the slug you reference in an article's `authors:` front matter
    - `content/about.md`, `content/contact.md` — swap the placeholder copy
-   - `content/photography/index.md` — drop photos into the folder and list
+   - `content/photography/index.md` — delete the twelve Unsplash sample photos, then drop yours into the folder and list
      them in the `photos` front matter, or delete the whole `photography/`
      folder and its `[[menu.main]]` entry in `hugo.toml` if a given site has
      no use for a gallery
@@ -199,6 +199,26 @@ or Basin proxy: whatever you already have.
 Videos, a resources/links directory and a shop page are specific enough to
 one use case that they're not included here. Add a new content section and layout the same way
 `articles/` is built if a future site needs one.
+
+## Sample photo credits
+
+The sample photos are from [Unsplash](https://unsplash.com/license) (free to
+use, no permission needed) via [Lorem Picsum](https://picsum.photos):
+
+| File | Photographer |
+| --- | --- |
+| `alpine-peak.jpg` | [Paul E. Harrer](https://unsplash.com/photos/TI-B-TNYJMU) |
+| `hiker.jpg` | [Danka & Peter](https://unsplash.com/photos/tvicgTdh7Fg) |
+| `bench-for-two.jpg` | [Charlie Foster](https://unsplash.com/photos/A88emaZe7d8) |
+| `blossom.jpg` | [Rula Sibai](https://unsplash.com/photos/-vq7mi4oF0s) |
+| `twin-lens-camera.jpg` | [Jennifer Trovato](https://unsplash.com/photos/baRYCsjO6z4) |
+| `forks.jpg` | [Alejandro Escamilla](https://unsplash.com/photos/8yqds_91OLw) |
+| `mountain-ridge.jpg` | [Go Wild](https://unsplash.com/photos/V0yAek6BgGk) |
+| `daisies.jpg` | [Alexander Shustov](https://unsplash.com/photos/AHBiSKaENwc) |
+| `sea-cliffs.jpg` | [Monika Majkowska](https://unsplash.com/photos/Nq8LdWC7HnM) |
+| `dandelion.jpg` | [Coley Christine](https://unsplash.com/photos/GyvMk5pPDXI) |
+| `birds-in-flight.jpg` | [Fré Sonneveld](https://unsplash.com/photos/liiqOto_Dw8) |
+| `field-at-sunset.jpg` | [Kenneth Thewissen](https://unsplash.com/photos/D76DklsG-5U) |
 
 ## Licence
 

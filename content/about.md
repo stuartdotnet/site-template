@@ -9,5 +9,3 @@ This is placeholder copy for the About page. Replace it with your own story: wha
 A couple of short paragraphs usually beats one long one — this template's type scale is tuned for that rhythm.
 
 [Meet the people who write here](/authors/) or [get in touch](/contact/).
-
-![](/images/uploads/wantage.jpg)
