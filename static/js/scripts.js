@@ -68,8 +68,8 @@
         observeTargets.forEach(function (el) { observer.observe(el); });
     }
 
-    // Contact form — posts to the shared contact-relay Worker. See
-    // hugo.toml's [params.contact] and C:\Code\contact-relay\README.md.
+    // Contact form: posts JSON to the endpoint in hugo.toml's
+    // [params.contact]. The payload is documented in the README.
     var contactForm = document.querySelector('.contact-form');
     if (contactForm) {
         var status = contactForm.querySelector('.form-status');

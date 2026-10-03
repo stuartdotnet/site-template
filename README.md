@@ -1,13 +1,29 @@
 # Site Template
 
 A lightweight Hugo starter for content sites: articles with tags and author
-profiles, full SEO metadata, social links, and an unwired contact form. No
-build step, no JS framework, no webfonts, no shipped images — clone it,
-rename it, and start editing.
+profiles, a photo gallery with a lightbox, full SEO metadata, social links, a
+contact form, and a browser-based content editor. No build step, no JS
+framework and no webfonts. Clone it, rename it, and start editing.
+
+It's the starting point I use for small sites. MIT licensed, so use it for
+anything.
+
+## Get it running
+
+You need [Hugo](https://gohugo.io/installation/) (the version in
+`.tool-versions` or newer) and git.
+
+```
+git clone https://github.com/stuartdotnet/site-template.git my-site
+cd my-site
+hugo server -D
+```
+
+Open <http://localhost:1313>.
 
 ## Use this for a new site
 
-1. Copy this folder to a new name.
+1. Clone it (above), or use **Use this template** on GitHub, and give it a new name.
 2. Edit `hugo.toml` — title, tagline, description, `baseURL`, and the social
    links under `[params.social]` (delete any platform you don't use).
 3. Replace the sample content:
@@ -19,13 +35,11 @@ rename it, and start editing.
      them in the `photos` front matter, or delete the whole `photography/`
      folder and its `[[menu.main]]` entry in `hugo.toml` if a given site has
      no use for a gallery
-4. Wire up the contact form. It posts to a shared Cloudflare Worker
-   (`C:\Code\contact-relay`) that every site on this stack reuses — same
-   pattern as the Sveltia CMS auth Worker below. Add this site to that
-   Worker's `SITES` var, then fill in `[params.contact]` in `hugo.toml`
-   (`siteId`, `endpoint`, `turnstileSiteKey`). Full instructions in
-   `contact-relay`'s own README. Leaving `[params.contact]` blank leaves the
-   form visibly disabled rather than silently unprotected.
+4. Wire up the contact form, or remove it. The form posts JSON to an endpoint
+   you provide, so it needs a small backend. See [Contact form](#contact-form)
+   below for exactly what it sends. Leaving `[params.contact]` blank leaves the
+   form visibly disabled rather than silently unprotected. To drop it, delete
+   `content/contact.md` and the Contact `[[menu.main]]` entry in `hugo.toml`.
 5. Re-theme if you want — every color and font in `static/css/styles.css` is
    a CSS custom property at the top of the file. Nothing below it should
    need to change for a basic re-skin.
@@ -94,7 +108,7 @@ Sveltia doesn't care what it's called, it's just a static folder with an
 GitHub OAuth flow, which is keyed to the Worker's own `/callback` path, not
 this one.
 
-### One-time setup (shared across every house-stack site — do this once, not per clone)
+### One-time setup (shared across all your sites, so do this once, not per clone)
 
 Sveltia has no built-in auth backend the way Netlify Identity does, so GitHub
 OAuth needs a small relay. [`sveltia/sveltia-cms-auth`](https://github.com/sveltia/sveltia-cms-auth)
@@ -111,7 +125,7 @@ is the CMS author's own Cloudflare Worker built for exactly this:
    App, and optionally `ALLOWED_DOMAINS` to a comma-separated list of every
    site's hostname that will use it.
 
-Reuse this one Worker and OAuth App for every site on the stack — add a new
+Reuse this one Worker and OAuth App for every site you build from this template. Add a new
 site's domain to `ALLOWED_DOMAINS` rather than standing up a second one.
 
 ### Per-site setup (do this for every clone, same as `baseURL`)
@@ -125,8 +139,13 @@ backend:
 site_url: https://example.com # must match hugo.toml's baseURL
 ```
 
-`bash "C:/Code/.claude/skills/site-build/scripts/preflight.sh"` catches either
-placeholder left unset, the same way it catches an unset `baseURL`.
+Leave either placeholder unset and the editor simply won't connect, so check
+both before you launch. The same goes for `baseURL` in `hugo.toml`.
+
+If you'd rather skip the OAuth Worker, Sveltia can also sign in with a GitHub
+personal access token (fine-grained, **Contents: Read and write**, limited to
+this one repo). Leave `base_url` out of `config.yml` and choose **Sign in with
+GitHub token** on the login screen. That suits one or two technical editors.
 
 An editor needs push access to the site's GitHub repo — there is no separate
 CMS user list; GitHub permissions *are* the permission system.
@@ -142,18 +161,45 @@ real auth.
 
 ## Contact form
 
-The contact page posts to `contact-relay`, one Cloudflare Worker shared
-across every site on this stack — same reuse-one-Worker pattern as the CMS
-auth above, not a per-site backend. It Turnstile-verifies the submission, rate-limits
-by IP, and stores every message in D1 before best-effort emailing a
-notification via Resend, so a message is never lost even if the email send
-fails. See `C:\Code\contact-relay\README.md` for the one-time Worker setup
-and the per-site steps (adding this site to `SITES`, filling in
-`[params.contact]` here).
+A static site has nowhere to send a form to, so the contact page posts to an
+endpoint you run. Set all three values in `[params.contact]` in `hugo.toml`:
+
+- `endpoint`: the URL the form `POST`s to
+- `siteId`: a short name for this site, sent with every message so one backend
+  can serve many sites
+- `turnstileSiteKey`: the public key of a [Cloudflare Turnstile](https://developers.cloudflare.com/turnstile/)
+  widget (free spam protection). Add your site's hostname to the widget.
+
+The request is `POST` with a JSON body:
+
+```json
+{
+  "site": "my-site",
+  "name": "Ada",
+  "email": "ada@example.com",
+  "message": "Hello",
+  "hp": "",
+  "token": "<Turnstile response token>"
+}
+```
+
+and it expects JSON back: `{ "ok": true }` on success, anything else is shown
+to the visitor as a failure. `hp` is a honeypot field that real people leave
+empty, so drop any request where it isn't. Your backend should also verify
+`token` with Turnstile's server-side API, rate-limit by IP, and check the
+request's `Origin` against your site's address.
+
+I run mine as one small Cloudflare Worker shared by every site I build, which
+stores each message in D1 and emails me through Resend. Any backend that
+accepts the request above will do. A Worker, an Azure Function, a Formspree
+or Basin proxy: whatever you already have.
 
 ## What's deliberately not here
 
-Videos, a resources/links directory, and a shop page existed in the site
-this was templated from but are specific enough to one use case that they're
-not included here. Add a new content section and layout the same way
+Videos, a resources/links directory and a shop page are specific enough to
+one use case that they're not included here. Add a new content section and layout the same way
 `articles/` is built if a future site needs one.
+
+## Licence
+
+MIT. Use it, change it, sell it, no attribution needed. See `LICENSE`.

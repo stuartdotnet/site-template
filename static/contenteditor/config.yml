@@ -2,15 +2,13 @@
 #
 # Scope is deliberate: articles, authors, about and contact copy. hugo.toml
 # (title, tagline, social links, menu, markup/security config) is NOT exposed
-# here and stays a code change — see the site-build skill's baseline.md,
-# section 7, for why.
+# here and stays a code change, so an editor can't break the site's settings.
 #
-# Two placeholders below MUST be set per site before this goes live —
-# `bash scripts/preflight.sh` (from the site-build skill) flags both:
-#   1. backend.repo   — this site's own GitHub repo, "owner/name"
-#   2. backend.base_url — the shared OAuth worker URL (one-time setup,
-#      reused across every house-stack site). See README.md, "Content
-#      editing (CMS)".
+# Two placeholders below MUST be set per site before this goes live:
+#   1. backend.repo     the site's own GitHub repo, "owner/name"
+#   2. backend.base_url the OAuth Worker URL (one-time setup, reusable across
+#      all your sites). See README.md, "Content editing (CMS)". Remove this
+#      line to sign in with a personal access token instead.
 
 backend:
   name: github
