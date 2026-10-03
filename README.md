@@ -222,4 +222,6 @@ use, no permission needed) via [Lorem Picsum](https://picsum.photos):
 
 ## Licence
 
-MIT. Use it, change it, sell it, no attribution needed. See `LICENSE`.
+MIT. Use it, change it, sell it. The one condition is that you keep the copyright
+notice and the `LICENSE` file with the code. No credit is needed on your
+finished site. See `LICENSE`.
