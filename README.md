@@ -85,7 +85,7 @@ Bump the version in `.tool-versions` and the host variable together.
   is the filename, sitting in the same folder as `index.md`; `alt` is
   required; `caption` is optional). Hugo generates a grid thumbnail and a
   larger lightbox image per photo at build time — drop in the original
-  file and don't pre-resize it. Ships with `photos: []` and zero image
+  file and don't pre-resize it. Originals are not published: the `[[cascade]]` block in `hugo.toml` ships only the resized WebP versions, so full-size files and their EXIF/GPS data stay off the public site. Ships with `photos: []` and zero image
   files, consistent with the rest of the template; the page renders an
   empty state until photos are added. The grid (`.gallery-grid`) and the
   native `<dialog>` lightbox (`static/js/scripts.js`) are both no-ops with

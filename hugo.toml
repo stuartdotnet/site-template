@@ -6,6 +6,16 @@ title = 'Site Template'
 # follows baseURL. Never ship a static one with a hardcoded URL.
 enableRobotsTXT = true
 
+# Photos are published only as the resized WebP versions the layouts ask for.
+# Without this Hugo also copies each original (full size, EXIF and GPS data
+# intact) into the public site. Scoped to the photography page, so article
+# images are unaffected.
+[[cascade]]
+  [cascade.build]
+    publishResources = false
+  [cascade.target]
+    path = '{/photography,/photography/**}'
+
 [taxonomies]
   tag = 'tags'
   author = 'authors'
