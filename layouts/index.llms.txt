@@ -1,0 +1,30 @@
+{{- /*
+    /llms.txt: a plain-text map of the site for AI assistants. Built from
+    the menu, latest articles and social links, so it follows baseURL and never
+    needs hand-editing. Add a custom summary with params.geo.summary.
+*/ -}}
+# {{ site.Title }}
+
+> {{ with site.Params.geo.summary }}{{ . }}{{ else }}{{ site.Params.description }}{{ end }}
+
+## Pages
+{{ range site.Menus.main }}
+- [{{ .Name }}]({{ .URL | absURL }})
+{{- end }}
+
+{{ $articles := where site.RegularPages "Section" "articles" -}}
+{{- with $articles }}
+## Latest articles
+{{ range first 10 . }}
+- [{{ .Title }}]({{ .Permalink }}){{ with .Description }}: {{ . }}{{ end }}
+{{- end }}
+{{ end }}
+{{- $links := slice }}
+{{- range $k, $v := site.Params.social }}{{ if and $v (not (findRE `/@?example/?$` $v)) }}{{ $links = $links | append $v }}{{ end }}{{ end }}
+{{- range site.Params.geo.sameAs }}{{ $links = $links | append . }}{{ end }}
+{{- with $links }}
+## Elsewhere
+{{ range . }}
+- <{{ . }}>
+{{- end }}
+{{ end }}

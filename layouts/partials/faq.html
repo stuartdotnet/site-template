@@ -1,0 +1,24 @@
+{{/*
+    Visible FAQ, answer first. Renders nothing until data/faq.yaml has real
+    entries. The same file feeds the FAQPage JSON-LD (geo-schema.html), so the
+    markup and the visible text can never drift apart.
+*/}}
+{{- $faq := partial "faq-items.html" . -}}
+{{- with $faq }}
+<section id="faq" class="home-section" data-observe>
+    <div class="container">
+        <div class="section-header">
+            <span class="section-eyebrow">FAQ</span>
+            <h2 class="section-title">Common Questions</h2>
+        </div>
+        <div class="faq-list">
+            {{- range . }}
+            <div class="faq-item">
+                <h3 class="faq-q">{{ .q }}</h3>
+                <div class="faq-a">{{ .a | markdownify }}</div>
+            </div>
+            {{- end }}
+        </div>
+    </div>
+</section>
+{{- end }}

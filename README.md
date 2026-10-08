@@ -194,6 +194,50 @@ stores each message in D1 and emails me through Resend. Any backend that
 accepts the request above will do. A Worker, an Azure Function, a Formspree
 or Basin proxy: whatever you already have.
 
+## Show up in AI answers
+
+Assistants like ChatGPT, Claude, Gemini, Perplexity and Copilot answer from
+search indexes plus pages they can read as plain HTML. The template does the
+on-site half of that for you:
+
+- **`robots.txt`** names the AI retrieval and training crawlers (OAI-SearchBot,
+  ChatGPT-User, GPTBot, PerplexityBot, ClaudeBot, Claude-SearchBot,
+  Google-Extended, Applebot-Extended, bingbot) and allows them. Set
+  `params.geo.aiCrawlers = false` to remove the named groups.
+- **`/llms.txt`** is generated from your menu, latest articles and social links.
+  Put a one or two sentence factual summary in `params.geo.summary`.
+- **Structured data**: the home page declares a `WebSite` and the
+  `Organization` (or `Person`) behind it, linked by `@id`, with `sameAs` built
+  from `[params.social]` plus `params.geo.sameAs`. Articles point their author
+  and publisher back at the same entities. Placeholder `example` URLs are
+  skipped, so nothing bogus ships.
+- **FAQ**: fill in `data/faq.yaml` and a visible FAQ section and matching
+  `FAQPage` markup appear on the home page. Entries starting with `TODO` are
+  skipped (and warn at build). Open each answer with a sentence that stands
+  alone, because that is the bit an assistant quotes.
+- **Freshness**: articles show an "Updated" date when `lastmod` is set in front
+  matter, and the sitemap uses the same date. Update dates only when you really
+  change the page.
+- Static HTML from the start, so there is no JavaScript wall for crawlers.
+
+The off-site half is up to you:
+
+1. Verify the site in **Bing Webmaster Tools** and **Google Search Console** and
+   submit `sitemap.xml`. ChatGPT and Copilot lean on Bing, Gemini on Google.
+2. Optional: **IndexNow** pings Bing when pages change. Cloudflare's Crawler
+   Hints does this for you; otherwise host a key file in `static/` and POST
+   your changed URLs to `https://api.indexnow.org/indexnow`.
+3. Use one name everywhere (GitHub, LinkedIn, newsletter, directories), each
+   linking back to the site, so assistants resolve it as one entity.
+4. Get mentioned elsewhere. Third-party mentions beat your own pages.
+5. Measure with `geo/prompts.csv`: replace the placeholders with the questions
+   your readers ask, run each in a few assistants, 2 or 3 times, with web search
+   on and off, and log whether you are absent, mentioned or cited. Repeat monthly.
+
+If your host minifies HTML (Cloudflare Auto Minify does), empty `alt=""` becomes
+a bare `alt`, which some audit tools flag as missing. Give images real alt text
+where it makes sense.
+
 ## What's deliberately not here
 
 Videos, a resources/links directory and a shop page are specific enough to

@@ -1,0 +1,10 @@
+{{/* Returns the real (non-TODO) entries of data/faq.yaml as a slice of dicts. */}}
+{{- $items := slice -}}
+{{- range hugo.Data.faq -}}
+    {{- if or (strings.HasPrefix .q "TODO") (strings.HasPrefix .a "TODO") -}}
+        {{- warnf "faq: unfilled placeholder in data/faq.yaml (%s)" .q -}}
+    {{- else -}}
+        {{- $items = $items | append . -}}
+    {{- end -}}
+{{- end -}}
+{{- return $items -}}

@@ -1,0 +1,61 @@
+{{/*
+    Structured data for the home page: WebSite + the entity behind it + a
+    FAQPage when data/faq.yaml has real entries. Everything is linked by @id so
+    other pages (articles, authors) can point back at the same entity.
+
+    Configure under [params.geo] in hugo.toml:
+      entityType  "Organization" (default) or "Person"
+      sameAs      extra profile URLs, on top of everything under [params.social]
+      knowsAbout  topics the site is an authority on
+*/}}
+{{- $geo := site.Params.geo | default dict -}}
+{{- $base := site.BaseURL -}}
+{{- $entityID := printf "%s#entity" $base -}}
+{{- $same := slice -}}
+{{- range $k, $v := site.Params.social }}{{ if and $v (not (findRE `/@?example/?$` $v)) }}{{ $same = $same | append $v }}{{ end }}{{ end -}}
+{{- range $geo.sameAs }}{{ $same = $same | append . }}{{ end -}}
+{{- $faq := partial "faq-items.html" . -}}
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "WebSite",
+      "@id": "{{ $base }}#website",
+      "url": "{{ $base }}",
+      "name": {{ site.Title | jsonify | safeJS }},
+      "description": {{ site.Params.description | jsonify | safeJS }},
+      "inLanguage": {{ site.Language.Locale | default "en" | jsonify | safeJS }},
+      "publisher": { "@id": "{{ $entityID }}" }
+    },
+    {
+      "@type": {{ $geo.entityType | default "Organization" | jsonify | safeJS }},
+      "@id": "{{ $entityID }}",
+      "name": {{ site.Title | jsonify | safeJS }},
+      "url": "{{ $base }}",
+      "description": {{ site.Params.description | jsonify | safeJS }}
+      {{- with $same }},
+      "sameAs": {{ . | jsonify | safeJS }}
+      {{- end }}
+      {{- with $geo.knowsAbout }},
+      "knowsAbout": {{ . | jsonify | safeJS }}
+      {{- end }}
+    }
+    {{- if $faq }},
+    {
+      "@type": "FAQPage",
+      "@id": "{{ .Permalink }}#faq",
+      "mainEntity": [
+        {{- range $i, $f := $faq }}{{ if $i }},{{ end }}
+        {
+          "@type": "Question",
+          "name": {{ $f.q | jsonify | safeJS }},
+          "acceptedAnswer": { "@type": "Answer", "text": {{ $f.a | markdownify | plainify | jsonify | safeJS }} }
+        }
+        {{- end }}
+      ]
+    }
+    {{- end }}
+  ]
+}
+</script>

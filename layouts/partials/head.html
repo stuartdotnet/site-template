@@ -11,6 +11,7 @@
 {{/* --- Derived values ------------------------------------------------- */}}
 {{- $isPost := and .IsPage (eq .Section "articles") -}}
 {{- $title := cond .IsHome .Site.Title (printf "%s - %s" .Title .Site.Title) -}}
+{{- with site.Params.geo.homeTitle -}}{{ if $.IsHome }}{{ $title = . }}{{ end }}{{- end -}}
 {{- with .Params.metaTitle -}}{{ $title = . }}{{- end -}}
 {{- $desc := .Site.Params.description -}}
 {{- if not .IsHome -}}
@@ -21,7 +22,7 @@
 {{- end -}}
 {{- $ogType := cond $isPost "article" "website" -}}
 {{- $ogTitle := $title -}}
-{{- if .IsHome -}}{{ $ogTitle = .Site.Title }}{{- else if or $isPost (eq .Kind "term") -}}{{ $ogTitle = .Title }}{{- end -}}
+{{- if .IsHome -}}{{ $ogTitle = $title }}{{- else if or $isPost (eq .Kind "term") -}}{{ $ogTitle = .Title }}{{- end -}}
 
 {{/* og:image — front-matter override, else first in-content image. No site-wide
      default ships with the template, so the tag is simply omitted until one is set. */}}
@@ -79,17 +80,10 @@
 {{- end }}
 <link rel="canonical" href="{{ .Permalink }}">
 
-{{/* Structured data: WebSite on the home page, Article on articles */}}
+{{/* Structured data: WebSite + entity + FAQ on the home page (geo-schema.html),
+     Article on articles. Entities are linked by @id. */}}
 {{- if .IsHome }}
-<script type="application/ld+json">
-{
-  "@context": "https://schema.org",
-  "@type": "WebSite",
-  "name": {{ .Site.Title | jsonify | safeJS }},
-  "url": "{{ .Site.BaseURL }}",
-  "description": {{ .Site.Params.description | jsonify | safeJS }}
-}
-</script>
+{{ partial "geo-schema.html" . }}
 {{- else if $isPost }}
 <script type="application/ld+json">
 {
@@ -100,10 +94,14 @@
   "datePublished": "{{ .Date.Format "2006-01-02T15:04:05Z07:00" }}",
   "dateModified": "{{ .Lastmod.Format "2006-01-02T15:04:05Z07:00" }}",
   "url": "{{ .Permalink }}",
+  "mainEntityOfPage": "{{ .Permalink }}",
+  "inLanguage": {{ .Site.Language.Locale | default "en" | jsonify | safeJS }},
   {{- with (index (.GetTerms "authors") 0) }}
-  "author": { "@type": "Person", "name": {{ .Title | jsonify | safeJS }}, "url": "{{ .Permalink }}" },
+  {{- $aSame := slice }}
+  {{- range $k, $v := .Params.social }}{{ if and $v (not (findRE `/@?example/?$` $v)) }}{{ $aSame = $aSame | append $v }}{{ end }}{{ end }}
+  "author": { "@type": "Person", "name": {{ .Title | jsonify | safeJS }}, "url": "{{ .Permalink }}"{{ with $aSame }}, "sameAs": {{ . | jsonify | safeJS }}{{ end }}{{ with .Params.role }}, "jobTitle": {{ . | jsonify | safeJS }}{{ end }} },
   {{- end }}
-  "publisher": { "@type": "Organization", "name": {{ .Site.Title | jsonify | safeJS }}, "url": "{{ .Site.BaseURL }}" }
+  "publisher": { "@type": "Organization", "@id": "{{ .Site.BaseURL }}#entity", "name": {{ .Site.Title | jsonify | safeJS }}, "url": "{{ .Site.BaseURL }}" }
 }
 </script>
 {{- end }}

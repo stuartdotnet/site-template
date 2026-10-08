@@ -43,6 +43,21 @@ enableRobotsTXT = true
     linkedin = 'https://linkedin.com/company/example'
     youtube = 'https://youtube.com/@example'
 
+  # Generative engine optimisation. See "Show up in AI answers" in README.md.
+  [params.geo]
+    # "Organization" or "Person". Who the site is, for the structured data.
+    entityType = 'Organization'
+    # Overrides params.description in /llms.txt. One or two factual sentences.
+    summary = ''
+    # Profile URLs beyond [params.social], e.g. GitHub, Wikipedia, a Substack.
+    sameAs = []
+    # Topics the site is an authority on.
+    knowsAbout = []
+    # Set false to drop the named AI crawler groups from robots.txt.
+    aiCrawlers = true
+    # Optional <title> for the home page. Defaults to the site title.
+    homeTitle = ''
+
 [menu]
   [[menu.main]]
     name = 'Articles'
@@ -78,8 +93,16 @@ enableRobotsTXT = true
     lineNos = false
     lineNumbersInTable = false
 
+# /llms.txt, generated from layouts/index.llms.txt so it follows baseURL.
+[outputFormats]
+  [outputFormats.LLMS]
+    mediaType = 'text/plain'
+    baseName = 'llms'
+    isPlainText = true
+    notAlternative = true
+
 [outputs]
-  home = ['HTML', 'RSS']
+  home = ['HTML', 'RSS', 'LLMS']
   section = ['HTML', 'RSS']
 
 [security]

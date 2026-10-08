@@ -1,5 +1,18 @@
+{{- /*
+    Search engines and AI answer engines are all welcome. Retrieval bots decide
+    whether this site can be cited, so they are named explicitly. A crawler obeys
+    only its most specific group, so each group repeats the Disallow lines of
+    the "*" group. Turn the named list off with params.geo.aiCrawlers = false.
+*/ -}}
+{{- $bots := slice "OAI-SearchBot" "ChatGPT-User" "GPTBot" "PerplexityBot" "Perplexity-User" "ClaudeBot" "Claude-SearchBot" "Claude-User" "Google-Extended" "Applebot-Extended" "bingbot" -}}
 User-agent: *
 Allow: /
 Disallow: /contenteditor/
-
+{{ if ne (site.Params.geo.aiCrawlers | default true) false }}
+{{- range $bots }}
+User-agent: {{ . }}
+Allow: /
+Disallow: /contenteditor/
+{{ end }}
+{{- end }}
 Sitemap: {{ "sitemap.xml" | absURL }}

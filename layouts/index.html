@@ -38,6 +38,9 @@
         </div>
     </section>
 
+    <!-- FAQ: answer-first, renders only once data/faq.yaml has real entries -->
+    {{ partial "faq.html" . }}
+
     <!-- Get Involved -->
     <section id="contact" class="home-section" data-observe>
         <div class="container">

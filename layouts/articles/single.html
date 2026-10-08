@@ -5,6 +5,7 @@
 
             <div class="article-post-meta">
                 <time class="article-date" datetime="{{ .Date.Format "2006-01-02" }}">{{ .Date.Format "2 January 2006" }}</time>
+                {{ if gt (.Lastmod.Sub .Date).Hours 24.0 }}<span class="article-updated">Updated <time datetime="{{ .Lastmod.Format "2006-01-02" }}">{{ .Lastmod.Format "2 January 2006" }}</time></span>{{ end }}
                 {{ range .GetTerms "tags" }}<a href="{{ .RelPermalink }}" class="tag">{{ .Title }}</a>{{ end }}
             </div>
 

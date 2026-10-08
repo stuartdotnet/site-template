@@ -1,0 +1,12 @@
+# Homepage FAQ. Rendered as visible text AND as FAQPage JSON-LD from this one
+# file, so write it once. Entries starting with "TODO" are skipped (and warn at
+# build), so nothing ships until you replace them.
+#
+# Write answer first: the opening sentence must make sense if an AI assistant
+# quotes only that. Use the questions people actually type, e.g. "How do I ...",
+# "What is ...". Markdown is allowed in answers. Link to the page that has the
+# full walkthrough.
+- q: "TODO: What is this site?"
+  a: "TODO: One or two sentences that answer on their own, then a link to the page with more."
+- q: "TODO: Who writes it?"
+  a: "TODO: Name, credentials, how long you have done this."
